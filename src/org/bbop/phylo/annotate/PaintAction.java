@@ -33,11 +33,11 @@ import org.bbop.phylo.model.Bioentity;
 import org.bbop.phylo.model.Family;
 import org.bbop.phylo.model.GeneAnnotation;
 import org.bbop.phylo.model.Tree;
+import org.bbop.phylo.owl.OWLutil;
 import org.bbop.phylo.tracking.LogAction;
 import org.bbop.phylo.tracking.LogEntry;
 import org.bbop.phylo.tracking.LogEntry.LOG_ENTRY_TYPE;
 import org.bbop.phylo.util.Constant;
-import org.bbop.phylo.util.OWLutil;
 import org.bbop.phylo.util.TaxonChecker;
 
 public class PaintAction {

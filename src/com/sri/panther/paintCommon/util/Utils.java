@@ -542,6 +542,7 @@ public class Utils {
 
             out.print("GET " + localPath + "\n\n");
             out.flush();
+            s.close();
             return (in);
         } catch (IOException ioex) {
             ioex.printStackTrace();
@@ -570,6 +571,7 @@ public class Utils {
 
             out.print("GET " + localPath + "\n\n");
             out.flush();
+            s.close();
             return (is);
         } catch (IOException ioex) {
             ioex.printStackTrace();
@@ -578,7 +580,7 @@ public class Utils {
     }
 
     /**
-     * description writes the array of strings into the file name speecified
+     * description writes the array of strings into the file name specified
      */
     public static boolean writeFile(String fileName, String[] contents) {
         BufferedWriter bufWriter = null;

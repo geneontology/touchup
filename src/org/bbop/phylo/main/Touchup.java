@@ -180,7 +180,7 @@ public class Touchup {
 		int review_count = 0;
 		int tree_count = 0;
 		for (String family_name : families) {
-			log.info("Touching up " + family_name + " (" + (families.indexOf(family_name) + 1) + " of " + families.size() + ")");
+			log.info("\n\tTouching up " + family_name + " (" + (families.indexOf(family_name) + 1) + " of " + families.size() + ")");
 			if (gafFileExists(family_name)) {
 				gaf_count++;
 				Family family = new Family(family_name);
@@ -234,6 +234,7 @@ public class Touchup {
 				return run_summary.size();
 			}
 			family_count++;
+			System.gc();
 		}
 		logSummary(run_summary, families.size(), family_count, tree_count, gaf_count, review_count);
 		return run_summary.size();
@@ -243,7 +244,7 @@ public class Touchup {
 		String program_name = ResourceLoader.inst().loadVersion();
 		File log_dir = new File(TouchupConfig.inst().gafdir);
 		if (FileUtil.validPath(log_dir)) {
-			File logFileName = new File(log_dir, program_name + Constant.LOG_SUFFIX);
+			File logFileName = new File(log_dir, program_name + "_" + LogUtil.dateNow() + Constant.LOG_SUFFIX);
 			List<String> contents = new ArrayList<>();
 			contents.add("# " + program_name + " Log Report for " + LogUtil.dateNow());
 			contents.add("");
@@ -251,7 +252,7 @@ public class Touchup {
 			Set<String> families = summaries.keySet();
 			String[] fam_array = families.toArray(new String[families.size()]);
 			Arrays.sort(fam_array);
-			for (String family_name : families) {
+			for (String family_name : fam_array) {
 				List<String> alerts = summaries.get(family_name);
 				if (alerts != null) {
 					contents.add(family_name +  " needs review ---\n");
@@ -259,9 +260,7 @@ public class Touchup {
 				}
 			}
 			try {
-				contents.set(1, "Touched up " + summaries.size() + " of " + total_fams + " PAINT families " + 
-						(total_fams - tree_count) + " no longer have trees, " +
-						(family_count - gaf_count) + " are missing GAF files, and " + 
+				contents.set(1, "Touched up " + summaries.size() + " PAINT families " + 
 						review_count + " need reviewing.");
 				FileUtil.writeFile(logFileName, contents);
 			} catch (IOException e) {

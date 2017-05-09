@@ -26,7 +26,7 @@ import java.util.List;
 import org.bbop.phylo.model.Bioentity;
 import org.bbop.phylo.model.GeneAnnotation;
 import org.bbop.phylo.model.Tree;
-import org.bbop.phylo.util.OWLutil;
+import org.bbop.phylo.owl.OWLutil;
 
 public class WithEvidence {
 

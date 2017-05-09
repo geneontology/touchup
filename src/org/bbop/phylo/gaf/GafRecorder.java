@@ -25,6 +25,7 @@ import org.bbop.phylo.tracking.LogEntry;
 import org.bbop.phylo.tracking.LogUtil;
 import org.bbop.phylo.util.Constant;
 import org.bbop.phylo.util.FileUtil;
+import org.bbop.phylo.util.TimerUtil;
 
 public class GafRecorder {
 
@@ -53,7 +54,9 @@ public class GafRecorder {
 	public void record(Family family, File family_dir, String comment) {
 		String family_name = family.getFamily_name();
 		boolean ok = FileUtil.validPath(family_dir);
+		TimerUtil timer = new TimerUtil();
 		if (ok) {
+			log.info("Saving annotations to GAF");
 			File gaf_file = new File(family_dir, family_name + Constant.GAF_SUFFIX);
 			Tree tree = family.getTree();
 			GafDocument gaf_doc = new GafDocument(gaf_file.getAbsolutePath(), family_dir.getAbsolutePath());
@@ -77,7 +80,6 @@ public class GafRecorder {
 					}
 				}
 			}
-			log.info("Wrote updated paint GAF to " + gaf_file);
 
 			if (questioned_annots != null && !questioned_annots.getGeneAnnotations().isEmpty()) {
 				File challenge_file = new File(family_dir, family_name + Constant.QUESTIONED_SUFFIX);
@@ -99,6 +101,7 @@ public class GafRecorder {
 				gaf_writer.write(gaf);
 				IOUtils.closeQuietly(challenge_writer);
 			}
+			log.info("Wrote updated paint GAF in " + timer.reportElapsedTime() + " to " + gaf_file);
 		} else {
 			log.error("Unable to save paint GAF for " + family_name + " in " + family_dir);
 		}
@@ -117,7 +120,6 @@ public class GafRecorder {
 			gaf_writer.setStream(gaf_file);
 			gaf_writer.write(gaf_doc);
 			IOUtils.closeQuietly(gaf_writer);
-			log.info("Wrote experimental evidence GAF to " + gaf_file);
 		} else {
 			log.error("Unable to save experimental evidence GAF for " + family_name + " in " + family_dir);
 		}		

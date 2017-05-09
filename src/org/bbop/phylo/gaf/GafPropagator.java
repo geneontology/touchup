@@ -41,12 +41,13 @@ import org.bbop.phylo.io.panther.IDmap;
 import org.bbop.phylo.model.Bioentity;
 import org.bbop.phylo.model.Family;
 import org.bbop.phylo.model.GeneAnnotation;
+import org.bbop.phylo.owl.OWLutil;
 import org.bbop.phylo.tracking.LogAction;
 import org.bbop.phylo.tracking.LogAlert;
 import org.bbop.phylo.tracking.LogEntry;
 import org.bbop.phylo.util.Constant;
 import org.bbop.phylo.util.FileUtil;
-import org.bbop.phylo.util.OWLutil;
+import org.bbop.phylo.util.TimerUtil;
 
 public class GafPropagator {
 
@@ -190,12 +191,13 @@ public class GafPropagator {
 
 	public static boolean importAnnotations(Family family, File family_dir) {
 		boolean ok = FileUtil.validPath(family_dir);
+		TimerUtil timer = new TimerUtil();
 		if (ok) {
 			File gaf_file = new File(family_dir, family.getFamily_name() + Constant.GAF_SUFFIX);
 			GafObjectsBuilder builder = new GafObjectsBuilder();
 			GafDocument gafdoc;
 			try {
-				log.info("building GAF document");
+				log.info("Propagating GAF annotations");
 				String full_name = gaf_file.getAbsolutePath();
 				gafdoc = builder.buildDocument(full_name);
 				family.setGafComments(gafdoc.getComments());
@@ -204,6 +206,7 @@ public class GafPropagator {
 				log.warn("URI Syntax exception for " + family.getFamily_name());
 				ok = false;
 			}
+			log.info("Propagation for " + family.getFamily_name() + " took " + timer.reportElapsedTime());
 		} else {
 			log.error("GAF directory is invalid: " + family_dir);
 		}

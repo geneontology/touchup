@@ -3,10 +3,10 @@ package org.bbop.phylo.io.golr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 
@@ -45,7 +45,7 @@ public abstract class AbstractRetrieveGolr {
 	protected abstract boolean isIndentJson();
 
 	protected abstract List<String> getRelevantFields();
-
+	
 	URI createGolrRequest(List<String []> tagvalues, String category, int start, int pagination) throws IOException {
 		try {
 			URIBuilder builder = new URIBuilder(server);
@@ -90,23 +90,12 @@ public abstract class AbstractRetrieveGolr {
 
 	protected String getJsonStringFromUri(URI uri) throws IOException {
 		logRequest(uri);
-		return getJsonStringFromApacheURI(uri, retryCount);
-		//		return getJsonStringFromUri(uri, retryCount);
+		String json = getJsonStringFromApacheURI(uri, retryCount);
+//		String json = getJsonStringFromUri(uri, retryCount);
+		return json;
 	}
 
 	protected String getJsonStringFromApacheURI(URI uri, int retryCount) throws IOException {
-		// final URL url = uri.toURL();
-		ClassLoader classLoader = AbstractRetrieveGolr.class.getClassLoader();
-		final Enumeration<URL> resource1 = classLoader.getResources("org.apache.http.impl.client.CloseableHttpClient.class");
-		System.out.println(resource1);
-		while (resource1.hasMoreElements()) {
-			System.out.println("connection: " + resource1.nextElement());	
-		}
-		final Enumeration<URL> resource2 = classLoader.getResources("org.apache.http.impl.client.HttpClients.class");
-		System.out.println(resource2);
-		while (resource2.hasMoreElements()) {
-			System.out.println("clients: " + resource2.nextElement());	
-		}
 
 		CloseableHttpClient httpclient = HttpClients.createDefault(); // aka connection
 		try {
@@ -171,7 +160,6 @@ public abstract class AbstractRetrieveGolr {
 		return "";
 	}
 
-	/*
 	protected String getJsonStringFromUri(URI uri, int retryCount) throws IOException {
 		final URL url = uri.toURL();
 		final HttpURLConnection connection;
@@ -227,7 +215,7 @@ public abstract class AbstractRetrieveGolr {
 		}
 
 		// get string response from stream
-		String json;
+		String json = "";
 		try {
 			if (charset != null) {
 				json = IOUtils.toString(response, charset);
@@ -246,21 +234,19 @@ public abstract class AbstractRetrieveGolr {
 		}
 		return json;
 	}
-	 */
 
 	protected String retryRequest(URI uri, IOException e, int retryCount) throws IOException {
 		if (retryCount > 0) {
 			int remaining = retryCount - 1;
 			defaultRandomWait();
 			logRetry(uri, e, remaining);
-			//			return getJsonStringFromUri(uri, remaining);
-			return getJsonStringFromApacheURI(uri, remaining);
+			return getJsonStringFromUri(uri, remaining);
+//			return getJsonStringFromApacheURI(uri, remaining);
 		}
 		logRequestError(uri, e);
 		throw e;
 	}
 
-	/*	
 	private static String getErrorMsg(HttpURLConnection connection) {
 		String errorMsg = null;
 		InputStream errorStream = null;
@@ -279,7 +265,7 @@ public abstract class AbstractRetrieveGolr {
 		}
 		return errorMsg;
 	}
-	 */
+	
 	protected void defaultRandomWait() {
 		// wait a random interval between 400 and 1500 ms
 		randomWait(400, 1500);

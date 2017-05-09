@@ -51,15 +51,14 @@ public class TouchupPantherAdapter extends PantherAdapter {
 
 	public boolean loadFamily(Family family, Tree tree) {
 		TimerUtil timer = new TimerUtil();
-		log.info("Fetching " + family.getFamily_name() + " raw tree ");
 		boolean ok = active_adapter.loadFamily(family, tree);
-		log.info("\tFetched " + family.getFamily_name() + " raw tree ");
 		if (ok) {		    
 			PantherParserI parser = new TouchupPantherParser();
 			parser.parseFamily(family, tree);
-			log.info("\tParsed " + family.getFamily_name() + ": " + timer.reportElapsedTime());
 		}
-		log.info("Loaded " + family.getFamily_name() + ": " + timer.reportElapsedTime());
+		log.info("Loading " + family.getFamily_name() + 
+				", with " + tree.getLeaves().size() +
+				" leaves, took " + timer.reportElapsedTime());
 		return ok;
 	}
 

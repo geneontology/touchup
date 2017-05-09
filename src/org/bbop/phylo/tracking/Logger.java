@@ -20,6 +20,7 @@ public class Logger {
 	public static final String PRUNED_SECTION = "# PRUNED";
 	public static final String CHALLENGED_SECTION = "# CHALLENGED";
 	public static final String WARNING_SECTION = "# WARNINGS - THE FOLLOWING HAVE BEEN REMOVED FOR THE REASONS NOTED";
+	public static final String NO_WARNING = "# NO WARNINGS";
 	private static final String NOTES_SECTION = "# NOTES";
 	private static final String REF_SECTION = "# REFERENCE";
 	private static final String HISTORY_SECTION = "# HISTORY";
@@ -35,14 +36,17 @@ public class Logger {
 			List<String> warnings = new ArrayList<>();
 			contents.add(HISTORY_SECTION);
 			logHistory(contents, comment, date);
+
 			LogAction.inst().report(contents);
 			int warning_count = LogAlert.report(warnings);
 			if (warning_count == 0) {
-				contents.add("NO WARNINGS");
+				contents.add(Logger.NO_WARNING);
 			} else {
 				contents.add(Logger.WARNING_SECTION + " (" + warning_count + ")");
 				contents.addAll(warnings);
 			}
+			contents.add("");
+
 			contents.add(NOTES_SECTION);
 			logNotes(contents);
 			logBoilerplate(contents);

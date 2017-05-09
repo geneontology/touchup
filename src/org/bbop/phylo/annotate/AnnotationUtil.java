@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.bbop.phylo.config.TouchupConfig;
 import org.bbop.phylo.gaf.parser.GafDocument;
 import org.bbop.phylo.io.golr.RetrieveGolrAnnotations;
@@ -19,9 +20,10 @@ import org.bbop.phylo.model.Bioentity;
 import org.bbop.phylo.model.Family;
 import org.bbop.phylo.model.GeneAnnotation;
 import org.bbop.phylo.model.Tree;
+import org.bbop.phylo.owl.OWLutil;
 import org.bbop.phylo.tracking.LogAlert;
 import org.bbop.phylo.util.Constant;
-import org.bbop.phylo.util.OWLutil;
+import org.bbop.phylo.util.TimerUtil;
 
 public class AnnotationUtil {
 
@@ -98,41 +100,47 @@ public class AnnotationUtil {
 			"GO_REF:0000054",
 	};
 
-	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("AnnotationUtil.class");
+	private static final Logger log = org.apache.log4j.Logger.getLogger(AnnotationUtil.class);
 
 	public static boolean loadExperimental(Family family) {
 		TouchupConfig config = TouchupConfig.inst();
 
-		boolean proceed = loadExperimental(family, config.GOlrURL, true);
-		if (!proceed) {
-			config.GOlrURL = config.GOlrURL.equals(Constant.PUB_GOLR) ? Constant.DEV_GOLR : Constant.PUB_GOLR;
-			proceed = loadExperimental(family, config.GOlrURL, false);
-		}
+		String urlstring = "http://127.0.0.1:8983/solr";
+		
+		TimerUtil timer = new TimerUtil();
+		log.info("Begin loading experimental annotations from: " + urlstring);
+
+//		String urlstring = config.GOlrURL;
+//		if (TouchupConfig.inst().GOlrURL.isEmpty()) {
+//		TouchupConfig.inst().GOlrURL = Constant.DEV_GOLR;
+//	}
+		boolean proceed = loadExperimental(family, urlstring, true);
+//		if (!proceed) {
+//			config.GOlrURL = config.GOlrURL.equals(Constant.PUB_GOLR) ? Constant.DEV_GOLR : Constant.PUB_GOLR;
+//			proceed = loadExperimental(family, config.GOlrURL, false);
+//		}
+		log.info("Loading experimental annotations from " + urlstring + " took " + timer.reportElapsedTime());
 		return proceed;
 	}
 
 	private static boolean loadExperimental(Family family, String GOlrURL, boolean ignore) {
 		boolean proceed = false;
 		try {
-			proceed = (AnnotationUtil.collectExpAnnotationsBatched(family) >= 0);
+			proceed = (AnnotationUtil.collectExpAnnotationsBatched(family, GOlrURL) >= 0);
 		} catch (Exception e) {
 			if (!ignore) {
-				log.error("No response from GOlr server at " + TouchupConfig.inst().GOlrURL);
+				log.error("No response from GOlr server at " + GOlrURL);
 				e.printStackTrace();
 			}
 		}
 		return proceed;
 	}
 
-	public static int collectExpAnnotationsBatched(Family family) throws Exception {
+	public static int collectExpAnnotationsBatched(Family family, String GOlrURL) throws Exception {
 		Tree tree = family.getTree();
 		List<Bioentity> leaves = tree.getLeaves();
 		int count = 0;
-		if (TouchupConfig.inst().GOlrURL.isEmpty()) {
-			TouchupConfig.inst().GOlrURL = Constant.DEV_GOLR;
-		}
-		log.info("Retrieving experimental annotations from: " + TouchupConfig.inst().GOlrURL);
-		RetrieveGolrAnnotations retriever = new RetrieveGolrAnnotations(TouchupConfig.inst().GOlrURL, 3, true) {
+		RetrieveGolrAnnotations retriever = new RetrieveGolrAnnotations(GOlrURL, 0, true) {
 			@Override
 			protected void logRequest(URI uri) {
 				super.logRequest(uri);
@@ -154,7 +162,7 @@ public class AnnotationUtil {
 		List<String> gene_names = new ArrayList<>();
 		Map<String, Bioentity> id2gene = new HashMap<>();
 		int increment = 100;
-		for (int i = 0; i < leaves.size(); i += increment) {
+		for (int i = 0; i < leaves.size() && count >= 0; i += increment) {
 			gene_names.clear();
 			id2gene.clear();
 			int limit = Math.min(leaves.size(), i + increment);
@@ -211,8 +219,6 @@ public class AnnotationUtil {
 						count+= golrDocuments.size();
 					}
 				}
-			} else {
-				count = -1;
 			}
 		}
 		return count;

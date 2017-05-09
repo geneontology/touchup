@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.bbop.phylo.model.Bioentity;
 import org.bbop.phylo.model.GeneAnnotation;
-import org.bbop.phylo.util.OWLutil;
+import org.bbop.phylo.owl.OWLutil;
 
 public class LogAlert {
 	/**
@@ -77,7 +77,9 @@ public class LogAlert {
 				|| (obsoletes != null && !obsoletes.isEmpty())) {
 			if (!invalids.isEmpty()) {
 				count += invalids.size();
-				contents.add("## " + invalids.size() + " annotations are invalid and have been removed.");
+				contents.add("## " + invalids.size() +
+				(invalids.size() == 1 ? " annotation is unsupported and has been removed." 
+						: " annotations are unsupported and have been removed."));
 				for (LogEntry entry : invalids) {
 					GeneAnnotation annotation = entry.getLoggedAssociation();
 					contents.add(annotation.getLastUpdateDate() + ": " +
@@ -88,7 +90,9 @@ public class LogAlert {
 			}
 			if (!missing.isEmpty()) {
 				count += missing.size();
-				contents.add("## " + missing.size() + " annotations are missing because the ancestral node is no longer found in this family");
+				contents.add("## " + missing.size() +
+				(missing.size() == 1 ? " annotation is " : " annotations are ") + 
+				"missing because the ancestral node is no longer found in this family");
 				for (LogEntry entry : missing) {
 					GeneAnnotation annotation = entry.getLoggedAssociation();
 					if (annotation.isCut())
@@ -105,7 +109,9 @@ public class LogAlert {
 			}
 			if (!obsoletes.isEmpty()) {
 				count += obsoletes.size();
-				contents.add("## The terms that were annotated to have been made obsolete");
+				contents.add("## " + obsoletes.size() +
+						(obsoletes.size() == 1 ? " annotation was made to an obsolete term." :
+							" annotations were made to obsolete terms."));
 				for (LogEntry entry : obsoletes) {
 					GeneAnnotation annotation = entry.getLoggedAssociation();
 					contents.add(annotation.getLastUpdateDate() + ": " +

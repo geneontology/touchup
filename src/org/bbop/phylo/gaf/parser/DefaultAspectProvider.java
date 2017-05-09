@@ -10,7 +10,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
-import owltools.graph.OWLGraphWrapper;
+import org.bbop.phylo.owl.OWLGraphWrapper;
 
 public class DefaultAspectProvider implements AspectProvider {
 

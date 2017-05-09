@@ -295,14 +295,14 @@ public class GAFParser implements AnnotationParserMessages {
 		if(file.startsWith("http://")) {
 			URL url = new URL(file);
 			is = url.openStream();
-			LOG.info("Open stream as URL");
+//			LOG.info("Open stream as URL");
 		} else if(file.startsWith("file:/")) {
 			is = new FileInputStream(new File(new URI(file)));
-			LOG.info("Open stream as file URI");
+//			LOG.info("Open stream as file URI");
 		} else {
 
 			is = new FileInputStream(file);
-			LOG.info("Open stream as file");
+//			LOG.info("Open stream as file");
 		}
 		
 		if(file.endsWith(".gz")){

@@ -102,7 +102,7 @@ public class PantherServerAdapter implements PantherLoadAdapterI {
 			TimerUtil timer = new TimerUtil();
 			LOG.info("Fetching " + family.getFamily_name() + " raw tree ");
 			RawComponentContainer rcc = getRawPantherFam(LoginUtil.getUserInfo(), family.getFamily_name(), timer);
-			LOG.info("Retrieving " + family.getFamily_name() + " raw tree took " + timer.reportElapsedTime());
+			LOG.info("\t retrieving " + family.getFamily_name() + " raw tree took " + timer.reportElapsedTime());
 			if (rcc != null){
 				family.setDescription(rcc.getName());
 			    

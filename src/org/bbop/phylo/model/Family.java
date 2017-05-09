@@ -20,23 +20,19 @@
 package org.bbop.phylo.model;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
 import org.bbop.phylo.gaf.GafRecorder;
 import org.bbop.phylo.io.panther.IDmap;
 import org.bbop.phylo.io.panther.PantherAdapterI;
-import org.bbop.phylo.io.panther.PantherParser;
-import org.bbop.phylo.io.panther.PantherParserI;
-import org.bbop.phylo.io.writer.PhylogenyWriter;
+import org.bbop.phylo.owl.OWLutil;
 import org.bbop.phylo.tracking.LogAction;
 import org.bbop.phylo.tracking.LogAlert;
 import org.bbop.phylo.tracking.LogUtil;
 import org.bbop.phylo.tracking.Logger;
 import org.bbop.phylo.util.Constant;
 import org.bbop.phylo.util.FileUtil;
-import org.bbop.phylo.util.OWLutil;
 
 public class Family implements Serializable {
 
@@ -132,15 +128,15 @@ public class Family implements Serializable {
 		}
 		boolean ok = FileUtil.validPath(family_dir);
 
-		if (ok) {
-			File phyloxml_file = new File(family_dir, family_name + Constant.PHYLOXML_SUFFIX);
-			PhylogenyWriter w = new PhylogenyWriter();
-			try {
-				w.toPhyloXML( phyloxml_file, this, getTree(), 0 );
-			} catch (IOException e) {
-				ok = false;
-			}
-		}
+//		if (ok) {
+//			File phyloxml_file = new File(family_dir, family_name + Constant.PHYLOXML_SUFFIX);
+//			PhylogenyWriter w = new PhylogenyWriter();
+//			try {
+//				w.toPhyloXML( phyloxml_file, this, getTree(), 0 );
+//			} catch (IOException e) {
+//				ok = false;
+//			}
+//		}
 		return ok;
 	}
 
